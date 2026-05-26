@@ -1,7 +1,8 @@
-#Estructura Completa del Repositorio
+## 📂 Estructura Completa del Repositorio
 
 El proyecto sigue una estructura de monorrepo que agrupa tanto el backend como el frontend, manteniendo el archivo de configuración de Git y la documentación en la raíz del repositorio.
 
+```text
 / (Raíz del Repositorio)
 ├── admin-frontend/            # Aplicación Frontend (React + Vite + TS)
 │   ├── public/                # Recursos estáticos públicos
@@ -65,6 +66,8 @@ El proyecto sigue una estructura de monorrepo que agrupa tanto el backend como e
 │   ├── package.json           # Dependencias y scripts del frontend
 │   ├── tsconfig.json          # Configuración de TypeScript
 │   └── vite.config.ts         # Configuración del empaquetador Vite
+│
+├── backend/                   # Aplicación Backend (API)
 │
 ├── .gitignore                 # Archivo de exclusiones de Git para todo el repositorio
 └── README.md                  # Documentación general del sistema
