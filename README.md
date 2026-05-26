@@ -1,73 +1,70 @@
-# React + TypeScript + Vite
+#Estructura Completa del Repositorio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+El proyecto sigue una estructura de monorrepo que agrupa tanto el backend como el frontend, manteniendo el archivo de configuración de Git y la documentación en la raíz del repositorio.
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+/ (Raíz del Repositorio)
+├── admin-frontend/            # Aplicación Frontend (React + Vite + TS)
+│   ├── public/                # Recursos estáticos públicos
+│   ├── src/
+│   │   ├── api/               # Configuración y cliente de Axios
+│   │   │   └── api.ts
+│   │   ├── assets/            # Recursos locales (imágenes, fuentes, logos)
+│   │   ├── components/        # Componentes globales de la aplicación
+│   │   │   ├── ui/            # Componentes de UI genéricos y reutilizables
+│   │   │   │   ├── Button.tsx
+│   │   │   │   ├── Table.tsx
+│   │   │   │   └── FormAlert.tsx
+│   │   │   ├── Navbar.tsx     # Barra de navegación superior
+│   │   │   └── ProtectedRoute.tsx # Guardián de rutas basado en roles de usuario
+│   │   ├── features/          # Módulos basados en lógica de negocio
+│   │   │   ├── auth/          # Gestión de autenticación y sesiones
+│   │   │   │   ├── components/
+│   │   │   │   ├── hooks/
+│   │   │   │   ├── pages/
+│   │   │   │   │   └── LoginPage.tsx
+│   │   │   │   └── services/
+│   │   │   ├── categorias/    # Gestión de jerarquías de categorías
+│   │   │   │   ├── components/
+│   │   │   │   ├── hooks/
+│   │   │   │   └── pages/
+│   │   │   │       └── CategoriasPage.tsx
+│   │   │   ├── ingredientes/  # Control de materias primas y alérgenos
+│   │   │   │   ├── components/
+│   │   │   │   ├── hooks/
+│   │   │   │   └── pages/
+│   │   │   │       └── IngredientesPage.tsx
+│   │   │   ├── productos/     # Catálogo de productos y control de stock
+│   │   │   │   ├── components/
+│   │   │   │   ├── hooks/
+│   │   │   │   └── pages/
+│   │   │   │       └── ProductosPage.tsx
+│   │   │   └── pedidos/       # Máquina de estados de pedidos (Rol Cajero)
+│   │   │       ├── components/
+│   │   │       ├── hooks/
+│   │   │       └── pages/
+│   │   │           ├── ListaPedidosPage.tsx
+│   │   │           └── DetallePedidoPage.tsx
+│   │   ├── router/            # Configuración y enrutado central de la app
+│   │   │   └── AppRouter.tsx
+│   │   ├── shared/            # Elementos transversales compartidos
+│   │   │   └── components/
+│   │   │       └── ConfirmModal.tsx
+│   │   ├── store/             # Manejo del estado global (Zustand)
+│   │   │   └── useAuthStore.ts
+│   │   ├── types/             # Definición de interfaces de TypeScript
+│   │   │   ├── categoria.ts
+│   │   │   ├── ingrediente.ts
+│   │   │   ├── producto.ts
+│   │   │   └── usuario.ts
+│   │   ├── App.css
+│   │   ├── App.tsx            # Componente raíz y proveedor de TanStack Query
+│   │   ├── index.css          # Estilos globales y directivas de Tailwind
+│   │   └── main.tsx           # Punto de entrada de React
+│   ├── .env                   # Variables de entorno locales del frontend
+│   ├── index.html
+│   ├── package.json           # Dependencias y scripts del frontend
+│   ├── tsconfig.json          # Configuración de TypeScript
+│   └── vite.config.ts         # Configuración del empaquetador Vite
+│
+├── .gitignore                 # Archivo de exclusiones de Git para todo el repositorio
+└── README.md                  # Documentación general del sistema
