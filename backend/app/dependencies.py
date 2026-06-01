@@ -7,13 +7,13 @@ from app.repositories import UsuarioRepository
 from app.services.auth_service import decode_token
 
 def get_current_user(
-        acces_token: Optional[str] = Cookie(default=None),
+        access_token: Optional[str] = Cookie(default=None),
         session: Session = Depends(get_session),
 ) -> Usuario:
-    if not acces_token:
+    if not access_token:
         raise HTTPException(status_code= status.HTTP_401_UNAUTHORIZED, detail="No autenticado")
     
-    payload = decode_token(acces_token)
+    payload = decode_token(access_token)
     usuario_id = int(payload.get("sub", 0))
 
     repo = UsuarioRepository(session)
