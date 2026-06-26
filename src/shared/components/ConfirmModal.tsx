@@ -9,6 +9,7 @@ interface ConfirmModalProps {
   onCancel: () => void;
 }
 
+/** Modal de confirmación para acciones destructivas. */
 export const ConfirmModal: React.FC<ConfirmModalProps> = ({ isOpen, title, message, onConfirm, onCancel }) => {
   if (!isOpen) return null;
 

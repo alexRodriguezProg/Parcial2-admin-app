@@ -2,7 +2,7 @@ export interface Pedido {
   id: number;
   usuario_id: number;
   fecha_creacion: string;
-  estado: 'PENDIENTE' | 'CONFIRMADO' | 'EN_PREP' | 'EN_CAMINO' | 'ENTREGADO' | 'CANCELADO';
+  estado: 'PENDIENTE' | 'CONFIRMADO' | 'EN_PREP' | 'ENTREGADO' | 'CANCELADO';
   forma_pago: string;
   total: number;
   direccion_id: number;

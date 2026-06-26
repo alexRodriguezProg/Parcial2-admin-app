@@ -6,6 +6,7 @@ interface ProtectedRouteProps {
   allowedRoles?: ('ADMIN' | 'STOCK' | 'PEDIDOS')[];
 }
 
+/** Ruta protegida que redirige a /login o /unauthorized según rol. */
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedRoles }) => {
   const { user, isAuthenticated } = useAuthStore();
 
@@ -13,7 +14,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedRoles }) 
     return <Navigate to="/login" replace />;
   }
 
-  if (allowedRoles && user && !allowedRoles.includes(user.rol as any)) {
+  if (allowedRoles && user && !allowedRoles.includes(user.rol as 'ADMIN' | 'STOCK' | 'PEDIDOS')) {
     return <Navigate to="/unauthorized" replace />;
   }
 

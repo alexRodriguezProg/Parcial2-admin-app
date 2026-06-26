@@ -1,10 +1,13 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { usePedidoDetalle, usePedidos } from '../hooks/usePedidos';
+import { useAdminWebSocket } from '../../../shared/hooks/useAdminWebSocket';
 import { Navbar } from '../../../components/Navbar';
 import { Table } from '../../../components/ui/Table';
 import { Button } from '../../../components/ui/Button';
 
+/** Página de detalle de pedido con cambio de estado en línea. */
 export const DetallePedidoPage = () => {
+  useAdminWebSocket();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const pedidoId = Number(id);
@@ -26,8 +29,7 @@ export const DetallePedidoPage = () => {
   const esquemaEstados: Record<string, string> = {
     PENDIENTE: 'CONFIRMADO',
     CONFIRMADO: 'EN_PREP',
-    EN_PREP: 'EN_CAMINO',
-    EN_CAMINO: 'ENTREGADO',
+    EN_PREP: 'ENTREGADO',
   };
 
   const proximoEstado = esquemaEstados[pedido.estado];
@@ -39,7 +41,10 @@ export const DetallePedidoPage = () => {
   };
 
   const handleCancelarPedido = () => {
-    avanzarEstadoMutation.mutate({ id: pedidoId, nuevoEstado: 'CANCELADO' });
+    const motivo = window.prompt('Motivo de cancelación:');
+    if (motivo !== null && motivo.trim() !== '') {
+      avanzarEstadoMutation.mutate({ id: pedidoId, nuevoEstado: 'CANCELADO', motivo: motivo.trim() });
+    }
   };
 
   return (
@@ -56,7 +61,7 @@ export const DetallePedidoPage = () => {
         <div className="bg-white p-6 rounded-lg shadow-sm grid grid-cols-2 gap-4">
           <div>
             <p className="text-sm text-gray-500">Estado Actual</p>
-            <p className="text-lg font-bold text-blue-600">{pedido.estado}</p>
+            <p className="text-lg font-bold text-orange-600">{pedido.estado}</p>
           </div>
           <div>
             <p className="text-sm text-gray-500">Total Facturado</p>

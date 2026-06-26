@@ -5,6 +5,7 @@ interface FormAlertProps {
   type?: 'error' | 'success';
 }
 
+/** Alerta de formulario para errores o mensajes de éxito. */
 export const FormAlert: React.FC<FormAlertProps> = ({ message, type = 'error' }) => {
   if (!message) return null;
 

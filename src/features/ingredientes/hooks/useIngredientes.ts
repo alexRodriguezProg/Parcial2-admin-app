@@ -1,15 +1,19 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../../api/api';
-import { Ingrediente } from '../../../types/ingrediente';
+import type { Ingrediente } from '../../../types/ingrediente';
 
-export const useIngredientes = () => {
+/** Hook que agrupa queries y mutations de ingredientes con filtros. */
+export const useIngredientes = (filtros: { search?: string; es_alergeno?: string } = {}) => {
   const queryClient = useQueryClient();
 
   const ingredientesQuery = useQuery<Ingrediente[]>({
-    queryKey: ['ingredientes'],
-    queryKeyFn: async () => {
-      const response = await api.get('/ingredientes/');
-      return response.data;
+    queryKey: ['ingredientes', { search: filtros.search, es_alergeno: filtros.es_alergeno }],
+    queryFn: async () => {
+      const params: Record<string, string> = {};
+      if (filtros.search) params.search = filtros.search;
+      if (filtros.es_alergeno) params.es_alergeno = filtros.es_alergeno;
+      const response = await api.get('/ingredientes/', { params });
+      return response.data.items ?? [];
     },
   });
 
@@ -23,8 +27,29 @@ export const useIngredientes = () => {
     },
   });
 
+  const editarIngredienteMutation = useMutation({
+    mutationFn: async ({ id, data }: { id: number; data: Partial<Ingrediente> }) => {
+      const response = await api.put(`/ingredientes/${id}`, data);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ingredientes'] });
+    },
+  });
+
+  const eliminarIngredienteMutation = useMutation({
+    mutationFn: async (id: number) => {
+      await api.delete(`/ingredientes/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ingredientes'] });
+    },
+  });
+
   return {
     ingredientesQuery,
     crearIngredienteMutation,
+    editarIngredienteMutation,
+    eliminarIngredienteMutation,
   };
 };

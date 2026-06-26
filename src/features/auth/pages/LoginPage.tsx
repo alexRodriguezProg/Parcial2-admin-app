@@ -5,6 +5,7 @@ import { authService } from '../services/authService';
 import { Button } from '../../../components/ui/Button';
 import { FormAlert } from '../../../components/ui/FormAlert';
 
+/** Página de inicio de sesión con redirección post-login según rol. */
 export const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,8 +21,8 @@ export const LoginPage = () => {
     setLoading(true);
 
     try {
-      const usuario = await authService.login(email, password);
-      setUser(usuario);
+      const { usuario, access_token } = await authService.login(email, password);
+      setUser(usuario, access_token);
       
       if (usuario.rol === 'PEDIDOS') {
         navigate('/pedidos');
@@ -30,10 +31,11 @@ export const LoginPage = () => {
       } else {
         navigate('/pedidos');
       }
-    } catch (err: any) {
-      if (err.response?.status === 422) {
+    } catch (err: unknown) {
+      const axiosErr = err as { response?: { status?: number } };
+      if (axiosErr.response?.status === 422) {
         setError('El formato del correo electrónico o la contraseña no es válido.');
-      } else if (err.response?.status === 401) {
+      } else if (axiosErr.response?.status === 401) {
         setError('Credenciales incorrectas. Verifique los datos ingresados.');
       } else {
         setError('Ocurrió un error en el servidor. Intente nuevamente más tarde.');
@@ -57,7 +59,7 @@ export const LoginPage = () => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
               required
             />
           </div>
@@ -68,7 +70,7 @@ export const LoginPage = () => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
               required
             />
           </div>

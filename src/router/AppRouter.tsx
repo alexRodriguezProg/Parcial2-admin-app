@@ -3,10 +3,11 @@ import { ProtectedRoute } from '../components/ProtectedRoute';
 import { LoginPage } from '../features/auth/pages/LoginPage';
 import { CategoriasPage } from '../features/categorias/pages/CategoriasPage';
 import { ProductosPage } from '../features/productos/pages/ProductosPage';
-import { ContactoPage } from '../features/ingredientes/pages/IngredientesPage';
+import { IngredientesPage } from '../features/ingredientes/pages/IngredientesPage';
 import { ListaPedidosPage } from '../features/pedidos/pages/ListaPedidosPage';
 import { DetallePedidoPage } from '../features/pedidos/pages/DetallePedidoPage';
 
+/** Router principal con rutas protegidas por rol. */
 export const AppRouter = () => {
   return (
     <BrowserRouter>
@@ -24,7 +25,7 @@ export const AppRouter = () => {
 
         <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
           <Route path="/categorias" element={<CategoriasPage />} />
-          <Route path="/ingredientes" element={<ContactoPage />} />
+          <Route path="/ingredientes" element={<IngredientesPage />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/login" replace />} />

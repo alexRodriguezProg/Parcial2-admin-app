@@ -2,6 +2,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
 import { Button } from './ui/Button';
 
+/** Barra de navegación superior con enlaces según el rol del usuario. */
 export const Navbar = () => {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
@@ -14,18 +15,18 @@ export const Navbar = () => {
   return (
     <nav className="bg-gray-800 text-white px-6 py-4 flex items-center justify-between w-full shadow-md">
       <div className="flex items-center gap-6">
-        <span className="font-bold text-xl tracking-wider text-blue-400">ADMIN PANEL</span>
+        <span className="font-bold text-xl tracking-wider text-orange-400">ADMIN PANEL</span>
         <div className="flex gap-4">
           {['ADMIN', 'STOCK', 'PEDIDOS'].includes(user?.rol || '') && (
-            <Link to="/pedidos" className="hover:text-blue-300 transition-colors">Pedidos</Link>
+            <Link to="/pedidos" className="hover:text-orange-300 transition-colors">Pedidos</Link>
           )}
           {['ADMIN', 'STOCK'].includes(user?.rol || '') && (
-            <Link to="/productos" className="hover:text-blue-300 transition-colors">Productos</Link>
+            <Link to="/productos" className="hover:text-orange-300 transition-colors">Productos</Link>
           )}
           {user?.rol === 'ADMIN' && (
             <>
-              <Link to="/categorias" className="hover:text-blue-300 transition-colors">Categorías</Link>
-              <Link to="/ingredientes" className="hover:text-blue-300 transition-colors">Ingredientes</Link>
+              <Link to="/categorias" className="hover:text-orange-300 transition-colors">Categorías</Link>
+              <Link to="/ingredientes" className="hover:text-orange-300 transition-colors">Ingredientes</Link>
             </>
           )}
         </div>

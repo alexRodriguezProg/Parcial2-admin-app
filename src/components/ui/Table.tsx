@@ -5,6 +5,7 @@ interface TableProps {
   children: React.ReactNode;
 }
 
+/** Tabla genérica con encabezados y contenido por slot. */
 export const Table: React.FC<TableProps> = ({ headers, children }) => {
   return (
     <div className="overflow-x-auto w-full border border-gray-200 rounded-lg">
