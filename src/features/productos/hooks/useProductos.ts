@@ -10,6 +10,7 @@ interface ProductoBackend {
   stock_cantidad: number;
   disponible: boolean;
   imagenes_url?: string[];
+  unidad_venta_id?: number;
   categorias: { id: number; nombre: string }[];
   ingredientes: { id: number; nombre: string; cantidad?: number }[];
 }
@@ -24,6 +25,7 @@ export function mapProducto(p: ProductoBackend): Producto {
     stock_cantidad: p.stock_cantidad,
     disponible: p.disponible,
     imagenes_url: p.imagenes_url ?? [],
+    unidad_venta_id: p.unidad_venta_id,
     categorias: (p.categorias ?? []).map((c) => ({ id: c.id, nombre: c.nombre })),
     ingredientes: (p.ingredientes ?? []).map((i) => ({
       id: i.id,
@@ -63,6 +65,14 @@ export const useProductos = (filtros: { categoria?: string; disponible?: string;
     queryFn: async () => {
       const response = await api.get('/ingredientes/');
       return response.data.items ?? [];
+    },
+  });
+
+  const unidadesQuery = useQuery<{ id: number; nombre: string; simbolo: string }[]>({
+    queryKey: ['unidades-medida'],
+    queryFn: async () => {
+      const response = await api.get('/unidades-medida/');
+      return response.data ?? [];
     },
   });
 
@@ -169,6 +179,7 @@ export const useProductos = (filtros: { categoria?: string; disponible?: string;
     productosQuery,
     categoriasQuery,
     ingredientesQuery,
+    unidadesQuery,
     crearProductoMutation,
     editarProductoMutation,
     cambiarDisponibilidadMutation,

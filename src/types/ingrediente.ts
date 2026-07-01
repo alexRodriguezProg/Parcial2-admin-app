@@ -3,4 +3,5 @@ export interface Ingrediente {
   nombre: string;
   descripcion?: string;
   es_alergeno: boolean;
+  stock_cantidad: number;
 }

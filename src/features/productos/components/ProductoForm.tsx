@@ -10,8 +10,9 @@ interface CreateProductoPayload {
   nombre: string;
   descripcion: string;
   precio_base: number;
-  stock_cantidad: number;
   disponible: boolean;
+  unidad_venta_id?: number;
+  imagenes_url?: string[];
   categoria_ids?: number[];
   ingredientes?: { ingrediente_id: number; cantidad?: number }[];
 }
@@ -25,6 +26,7 @@ interface ProductoFormProps {
   onCancel: () => void;
   categoriasList: { id: number; nombre: string }[];
   ingredientesList: { id: number; nombre: string }[];
+  unidadesList: { id: number; nombre: string; simbolo: string }[];
   crearProductoMutation: AnyMutation;
   editarProductoMutation: AnyMutation;
   assignCategoriaMutation: AnyMutation;
@@ -41,6 +43,7 @@ export function ProductoForm({
   onCancel,
   categoriasList,
   ingredientesList,
+  unidadesList,
   crearProductoMutation,
   editarProductoMutation,
   assignCategoriaMutation,
@@ -55,7 +58,7 @@ export function ProductoForm({
     nombre: '',
     descripcion: '',
     precio_base: 0,
-    stock_cantidad: 0,
+    unidad_venta_id: 0,
   });
   const [categoriasSeleccionadas, setCategoriasSeleccionadas] = useState<number[]>([]);
   const [ingredientesPendientes, setIngredientesPendientes] = useState<
@@ -66,6 +69,16 @@ export function ProductoForm({
   const [errorValidacion, setErrorValidacion] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Reinicia el formulario a valores vacíos
+  const resetForm = () => {
+    setFormulario({ nombre: '', descripcion: '', precio_base: 0, unidad_venta_id: 0 });
+    setCategoriasSeleccionadas([]);
+    setIngredientesPendientes([]);
+    setImagenesUrls([]);
+    setNuevoIngrediente({ ingredienteId: '', cantidad: '' });
+    setErrorValidacion('');
+  };
+
   // Reinitialize internal state when editando prop changes
   useEffect(() => {
     setEditandoLocal(editando);
@@ -74,26 +87,24 @@ export function ProductoForm({
         nombre: editando.nombre,
         descripcion: editando.descripcion,
         precio_base: editando.precio_base,
-        stock_cantidad: editando.stock_cantidad,
+        unidad_venta_id: editando.unidad_venta_id ?? 0,
       });
       setCategoriasSeleccionadas(editando.categorias.map((c) => c.id));
       setImagenesUrls(editando.imagenes_url ?? []);
+      setIngredientesPendientes([]);
+      setNuevoIngrediente({ ingredienteId: '', cantidad: '' });
+      setErrorValidacion('');
     } else {
-      setFormulario({ nombre: '', descripcion: '', precio_base: 0, stock_cantidad: 0 });
-      setCategoriasSeleccionadas([]);
-      setImagenesUrls([]);
+      resetForm();
     }
-    setIngredientesPendientes([]);
-    setNuevoIngrediente({ ingredienteId: '', cantidad: '' });
-    setErrorValidacion('');
   }, [editando]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorValidacion('');
 
-    if (formulario.precio_base <= 0 || formulario.stock_cantidad < 0) {
-      setErrorValidacion('El precio debe ser mayor a 0 y el stock no puede ser negativo.');
+    if (formulario.precio_base <= 0) {
+      setErrorValidacion('El precio debe ser mayor a 0.');
       return;
     }
 
@@ -116,13 +127,16 @@ export function ProductoForm({
       } else {
         await crearProductoMutation.mutateAsync({
           ...formulario,
+          unidad_venta_id: formulario.unidad_venta_id > 0 ? formulario.unidad_venta_id : undefined,
           disponible: true,
+          imagenes_url: imagenesUrls.length > 0 ? imagenesUrls : undefined,
           categoria_ids: categoriasSeleccionadas.length > 0 ? categoriasSeleccionadas : undefined,
           ingredientes:
             ingredientesPendientes.length > 0
               ? ingredientesPendientes.map((i) => ({ ingrediente_id: i.ingrediente_id, cantidad: i.cantidad }))
               : undefined,
         } as CreateProductoPayload);
+        resetForm();
       }
       onSaved();
     } catch {
@@ -132,8 +146,8 @@ export function ProductoForm({
 
   const handleAgregarIngrediente = async () => {
     const iid = Number(nuevoIngrediente.ingredienteId);
-    const cant = nuevoIngrediente.cantidad ? Number(nuevoIngrediente.cantidad) : undefined;
-    if (!iid) return;
+    const cant = Number(nuevoIngrediente.cantidad);
+    if (!iid || !cant || cant <= 0) return;
 
     if (editandoLocal) {
       const updated = await addIngredienteMutation.mutateAsync({
@@ -179,39 +193,66 @@ export function ProductoForm({
         {editandoLocal ? `Editando: ${editandoLocal.nombre}` : 'Agregar Nuevo Producto'}
       </h2>
       <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <input
-          type="text"
-          placeholder="Nombre"
-          value={formulario.nombre}
-          onChange={(e) => setFormulario({ ...formulario, nombre: e.target.value })}
-          className="px-3 py-2 border border-gray-300 rounded"
-          required
-        />
-        <input
-          type="text"
-          placeholder="Descripción"
-          value={formulario.descripcion}
-          onChange={(e) => setFormulario({ ...formulario, descripcion: e.target.value })}
-          className="px-3 py-2 border border-gray-300 rounded"
-          required
-        />
-        <input
-          type="number"
-          step="0.01"
-          placeholder="Precio"
-          value={formulario.precio_base ?? ''}
-          onChange={(e) => setFormulario({ ...formulario, precio_base: Number(e.target.value) })}
-          className="px-3 py-2 border border-gray-300 rounded"
-          required
-        />
-        <input
-          type="number"
-          placeholder="Stock Cantidad"
-          value={formulario.stock_cantidad ?? ''}
-          onChange={(e) => setFormulario({ ...formulario, stock_cantidad: Number(e.target.value) })}
-          className="px-3 py-2 border border-gray-300 rounded"
-          required
-        />
+        <div className="flex flex-col">
+          <label className="text-sm font-medium text-gray-700 mb-1">Nombre</label>
+          <input
+            type="text"
+            placeholder="Nombre del producto"
+            value={formulario.nombre}
+            onChange={(e) => setFormulario({ ...formulario, nombre: e.target.value })}
+            className="px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
+            required
+          />
+        </div>
+        <div className="flex flex-col">
+          <label className="text-sm font-medium text-gray-700 mb-1">Descripción</label>
+          <input
+            type="text"
+            placeholder="Descripción del producto"
+            value={formulario.descripcion}
+            onChange={(e) => setFormulario({ ...formulario, descripcion: e.target.value })}
+            className="px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
+            required
+          />
+        </div>
+        <div className="flex flex-col">
+          <label className="text-sm font-medium text-gray-700 mb-1">Precio Base ($)</label>
+          <input
+            type="number"
+            step="0.01"
+            min="0"
+            placeholder="Ej: 5500.00"
+            value={formulario.precio_base ?? ''}
+            onChange={(e) => setFormulario({ ...formulario, precio_base: Number(e.target.value) })}
+            className="px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
+            required
+          />
+        </div>
+        <div className="flex flex-col">
+          <label className="text-sm font-medium text-gray-700 mb-1">Stock (calculado por ingredientes)</label>
+          <div className="px-3 py-2 border border-gray-200 rounded bg-gray-50 text-gray-700 min-h-[42px] flex items-center">
+            {editandoLocal
+              ? editandoLocal.stock_cantidad
+              : ingredientesPendientes.length > 0
+                ? '—'
+                : 0}
+          </div>
+        </div>
+        <div className="flex flex-col">
+          <label className="text-sm font-medium text-gray-700 mb-1">Unidad de Medida</label>
+          <select
+            value={formulario.unidad_venta_id}
+            onChange={(e) => setFormulario({ ...formulario, unidad_venta_id: Number(e.target.value) })}
+            className="px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
+          >
+            <option value={0}>Seleccionar...</option>
+            {unidadesList.map((u) => (
+              <option key={u.id} value={u.id}>
+                {u.nombre} ({u.simbolo})
+              </option>
+            ))}
+          </select>
+        </div>
 
         {/* Categorías */}
         <div className="md:col-span-3 flex flex-col">
@@ -363,7 +404,8 @@ export function ProductoForm({
               <input
                 type="number"
                 step="0.01"
-                placeholder="Opcional"
+                min="0.01"
+                placeholder="Requerido"
                 value={nuevoIngrediente.cantidad}
                 onChange={(e) => setNuevoIngrediente((prev) => ({ ...prev, cantidad: e.target.value }))}
                 className="px-3 py-2 border border-gray-300 rounded w-24"
@@ -374,7 +416,7 @@ export function ProductoForm({
               variant="primary"
               className="text-xs"
               onClick={handleAgregarIngrediente}
-              disabled={!nuevoIngrediente.ingredienteId}
+              disabled={!nuevoIngrediente.ingredienteId || !nuevoIngrediente.cantidad}
             >
               Agregar
             </Button>

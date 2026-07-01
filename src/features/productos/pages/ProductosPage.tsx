@@ -22,6 +22,7 @@ export const ProductosPage = () => {
     productosQuery,
     categoriasQuery,
     ingredientesQuery,
+    unidadesQuery,
     crearProductoMutation,
     editarProductoMutation,
     cambiarDisponibilidadMutation,
@@ -41,6 +42,7 @@ export const ProductosPage = () => {
 
   const categoriasList = categoriasQuery.data ?? [];
   const ingredientesList = ingredientesQuery.data ?? [];
+  const unidadesList = unidadesQuery.data ?? [];
 
   const cerrarFormulario = () => setEditando(null);
 
@@ -89,6 +91,7 @@ export const ProductosPage = () => {
             onCancel={cerrarFormulario}
             categoriasList={categoriasList}
             ingredientesList={ingredientesList}
+            unidadesList={unidadesList}
             crearProductoMutation={crearProductoMutation}
             editarProductoMutation={editarProductoMutation}
             assignCategoriaMutation={assignCategoriaMutation}

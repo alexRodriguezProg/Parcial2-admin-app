@@ -21,6 +21,7 @@ export const IngredientesPage = () => {
   const [nombre, setNombre] = useState('');
   const [descripcion, setDescripcion] = useState('');
   const [esAlergeno, setEsAlergeno] = useState(false);
+  const [stockCantidad, setStockCantidad] = useState(0);
   const [editando, setEditando] = useState<Ingrediente | null>(null);
   const [errorApi, setErrorApi] = useState('');
   const [modalEliminar, setModalEliminar] = useState<{ open: boolean; id: number | null }>({ open: false, id: null });
@@ -29,6 +30,7 @@ export const IngredientesPage = () => {
     setNombre('');
     setDescripcion('');
     setEsAlergeno(false);
+    setStockCantidad(0);
     setEditando(null);
     setErrorApi('');
   };
@@ -41,13 +43,14 @@ export const IngredientesPage = () => {
       if (editando) {
         await editarIngredienteMutation.mutateAsync({
           id: editando.id,
-          data: { nombre, descripcion: descripcion || undefined, es_alergeno: esAlergeno },
+          data: { nombre, descripcion: descripcion || undefined, es_alergeno: esAlergeno, stock_cantidad: stockCantidad },
         });
       } else {
         await crearIngredienteMutation.mutateAsync({
           nombre,
           descripcion: descripcion || undefined,
           es_alergeno: esAlergeno,
+          stock_cantidad: stockCantidad,
         });
       }
       resetForm();
@@ -74,6 +77,7 @@ export const IngredientesPage = () => {
     setNombre(i.nombre);
     setDescripcion(i.descripcion ?? '');
     setEsAlergeno(i.es_alergeno);
+    setStockCantidad(i.stock_cantidad);
     setEditando(i);
     setErrorApi('');
   };
@@ -146,6 +150,16 @@ export const IngredientesPage = () => {
                 Es Alérgeno (Advertencia en UI)
               </label>
             </div>
+            <div className="flex-1 min-w-[150px]">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
+              <input
+                type="number"
+                min={0}
+                value={stockCantidad}
+                onChange={(e) => setStockCantidad(Math.max(0, parseInt(e.target.value) || 0))}
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
+              />
+            </div>
             <div className="flex gap-2 mt-6">
               <Button type="submit" variant={editando ? 'success' : 'primary'}>
                 {editando ? 'Actualizar Ingrediente' : 'Añadir Registro'}
@@ -193,12 +207,17 @@ export const IngredientesPage = () => {
           {ingredientesQuery.isLoading ? (
             <p className="text-gray-600">Procesando lista...</p>
           ) : (
-            <Table headers={['ID', 'Componente', 'Descripción', 'Condición Especial', 'Acciones']}>
+            <Table headers={['ID', 'Componente', 'Descripción', 'Stock', 'Condición Especial', 'Acciones']}>
               {ingredientesQuery.data?.map((i: Ingrediente) => (
                 <tr key={i.id}>
                   <td className="px-6 py-4">{i.id}</td>
                   <td className="px-6 py-4 font-medium">{i.nombre}</td>
                   <td className="px-6 py-4 text-gray-500 text-sm">{i.descripcion || '-'}</td>
+                  <td className="px-6 py-4">
+                    <span className={`font-semibold ${i.stock_cantidad <= 0 ? 'text-red-600' : i.stock_cantidad <= 5 ? 'text-yellow-600' : 'text-green-600'}`}>
+                      {i.stock_cantidad}
+                    </span>
+                  </td>
                   <td className="px-6 py-4">
                     {i.es_alergeno ? (
                       <span className="px-2 py-1 rounded text-xs font-semibold bg-orange-100 text-orange-800">

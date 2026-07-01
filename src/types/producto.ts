@@ -6,6 +6,7 @@ export interface Producto {
   stock_cantidad: number;
   disponible: boolean;
   imagenes_url?: string[];
+  unidad_venta_id?: number;
   categorias: { id: number; nombre: string }[];
   ingredientes: { id: number; nombre: string; cantidad?: number }[];
 }
