@@ -6,6 +6,7 @@ import { ProductosPage } from '../features/productos/pages/ProductosPage';
 import { IngredientesPage } from '../features/ingredientes/pages/IngredientesPage';
 import { ListaPedidosPage } from '../features/pedidos/pages/ListaPedidosPage';
 import { DetallePedidoPage } from '../features/pedidos/pages/DetallePedidoPage';
+import { ReportesPage } from '../features/reportes/pages/ReportesPage';
 
 /** Router principal con rutas protegidas por rol. */
 export const AppRouter = () => {
@@ -26,6 +27,7 @@ export const AppRouter = () => {
         <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
           <Route path="/categorias" element={<CategoriasPage />} />
           <Route path="/ingredientes" element={<IngredientesPage />} />
+          <Route path="/reportes" element={<ReportesPage />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/login" replace />} />

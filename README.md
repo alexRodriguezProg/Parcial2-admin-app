@@ -11,6 +11,7 @@ Panel de administración para la cadena de comida Food Store. Permite gestionar 
 - **TanStack React Query** — cache, fetching y sincronización de datos
 - **TanStack React Form** — formularios
 - **TanStack React Table** — tablas
+- **Recharts** — gráficos (LineChart, BarChart, PieChart)
 - **Axios** — HTTP client con cookies HttpOnly
 - **React Router DOM v7** — enrutamiento
 
@@ -24,6 +25,7 @@ Panel de administración para la cadena de comida Food Store. Permite gestionar 
 | `/productos` | ProductosPage | CRUD de productos con imágenes | ADMIN, STOCK |
 | `/categorias` | CategoriasPage | CRUD de categorías con jerarquía | ADMIN |
 | `/ingredientes` | IngredientesPage | CRUD de ingredientes | ADMIN |
+| `/reportes` | ReportesPage | Gráficos de ventas, productos, pedidos e ingresos | ADMIN |
 | `/unauthorized` | — | Redirección si el rol no tiene permiso | público |
 
 Las rutas protegidas redirigen a `/login` si no hay sesión y a `/unauthorized` si el rol no tiene permiso.
@@ -88,7 +90,8 @@ src/
 │   ├── pedidos/      # ListaPedidosPage, DetallePedidoPage, usePedidos
 │   ├── productos/    # ProductosPage, useProductos
 │   ├── categorias/   # CategoriasPage, useCategorias
-│   └── ingredientes/ # IngredientesPage, useIngredientes
+│   ├── ingredientes/ # IngredientesPage, useIngredientes
+│   └── reportes/     # ReportesPage, useReportes (gráficos)
 ├── router/           # AppRouter con rutas protegidas por rol
 ├── shared/           # Hooks y componentes compartidos
 │   ├── hooks/        # useAdminWebSocket

@@ -27,6 +27,7 @@ export const Navbar = () => {
             <>
               <Link to="/categorias" className="hover:text-orange-300 transition-colors">Categorías</Link>
               <Link to="/ingredientes" className="hover:text-orange-300 transition-colors">Ingredientes</Link>
+              <Link to="/reportes" className="hover:text-orange-300 transition-colors">Reportes</Link>
             </>
           )}
         </div>
